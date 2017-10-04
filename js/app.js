@@ -10,6 +10,8 @@
  *   - add each card's HTML to the page
  */
 
+let cards = $('.card').children();
+
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -25,6 +27,7 @@ function shuffle(array) {
     return array;
 }
 
+shuffled_cards = shuffle(cards);
 
 /*
  * set up the event listener for a card. If a card is clicked:
