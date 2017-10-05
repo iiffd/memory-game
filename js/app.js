@@ -49,27 +49,32 @@ shuffle(shuffled_values);
 card_elems.each(function(index) {
   const card_elem = $(this);
   card_elem.attr('class', shuffled_values[index]);
-  card_elem.parent().click(function() {
-    const parent_elem = $(this);
-    const child_elem = parent_elem.children();
-    parent_elem.addClass('open show');
 
-    open_cards++
-    if (open_cards == 2) {
-      let prev_child = card_obj.children()
-      if (child_elem.attr('class') !== prev_child.attr('class')) {
-        setTimeout(function() {
-          parent_elem.removeClass('open show');
-          card_obj.removeClass('open show');
-        }, 1000);
+  card_elem.parent().click(function() {
+    if (open_cards < 2) {
+      const parent_elem = $(this);
+      const child_elem = parent_elem.children();
+      parent_elem.addClass('open show');
+
+      open_cards++
+      if (open_cards == 2) {
+        let prev_child = card_obj.children()
+        if (child_elem.attr('class') !== prev_child.attr('class')) {
+          setTimeout(function() {
+            parent_elem.removeClass('open show');
+            card_obj.removeClass('open show');
+            open_cards = 0;
+          }, 1000);
+        } else {
+          parent_elem.addClass('match');
+          card_obj.addClass('match');
+          open_cards = 0;
+        }
       } else {
-        parent_elem.addClass('match');
-        card_obj.addClass('match');
+        card_obj = $(this);
       }
-      open_cards = 0;
-    } else {
-      card_obj = $(this);
     }
+
   })
 });
 
