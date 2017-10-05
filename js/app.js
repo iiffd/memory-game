@@ -1,7 +1,23 @@
 /*
  * Create a list that holds all of your cards
  */
+ let card_elems = $('.card').children();
+ class Card {
+   constructor(card_elems) {
+     this.card_elem = card_elem;
+     this.open = false;
+     this.match = false;
+   }
 
+   check_card() {
+     this.card_elem.addClass('show');
+   }
+ }
+
+ const shuffled_values = [];
+ for (let i = 0; i < card_elems.length; i++) {
+   shuffled_values.push(card_elems[i].className);
+ }
 
 /*
  * Display the cards on the page
@@ -10,7 +26,6 @@
  *   - add each card's HTML to the page
  */
 
-let cards = $('.card').children();
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -27,7 +42,12 @@ function shuffle(array) {
     return array;
 }
 
-shuffled_cards = shuffle(cards);
+// Shuffles card values and places them in dom in mixed order
+shuffle(shuffled_values);
+card_elems.each(function(index) {
+  $(this).attr('class', shuffled_values[index]);
+});
+
 
 /*
  * set up the event listener for a card. If a card is clicked:
@@ -39,3 +59,5 @@ shuffled_cards = shuffle(cards);
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+
+
