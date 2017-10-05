@@ -3,7 +3,7 @@
  */
  let card_elems = $('.card').children();
  class Card {
-   constructor(card_elems) {
+   constructor(card_elem) {
      this.card_elem = card_elem;
      this.open = false;
      this.match = false;
@@ -42,12 +42,23 @@ function shuffle(array) {
     return array;
 }
 
+let open_cards = 0;
+let card_obj = ''
 // Shuffles card values and places them in dom in mixed order
 shuffle(shuffled_values);
 card_elems.each(function(index) {
-  $(this).attr('class', shuffled_values[index]);
+  card_elem = $(this);
+  card_elem.attr('class', shuffled_values[index]);
+  card_elem.parent().click(function() {
+    $(this).addClass('open show');
+    card_obj = card_elem['className'];
+    open_cards++
+    if (open_cards == 2) {
+      open_cards = 0;
+    }
+    console.log(card_obj, open_cards);
+  })
 });
-
 
 /*
  * set up the event listener for a card. If a card is clicked:
