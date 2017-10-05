@@ -47,16 +47,26 @@ let card_obj = ''
 // Shuffles card values and places them in dom in mixed order
 shuffle(shuffled_values);
 card_elems.each(function(index) {
-  card_elem = $(this);
+  const card_elem = $(this);
   card_elem.attr('class', shuffled_values[index]);
   card_elem.parent().click(function() {
-    $(this).addClass('open show');
-    card_obj = card_elem['className'];
+    const parent_elem = $(this);
+    const child_elem = parent_elem.children();
+    parent_elem.addClass('open show');
+
     open_cards++
     if (open_cards == 2) {
+      let prev_child = card_obj.children()
+      if (child_elem.attr('class') !== prev_child.attr('class')) {
+        setTimeout(function() {
+          parent_elem.removeClass('open show');
+          card_obj.removeClass('open show');
+        }, 1000);
+      }
       open_cards = 0;
+    } else {
+      card_obj = $(this);
     }
-    console.log(card_obj, open_cards);
   })
 });
 
