@@ -62,6 +62,9 @@ card_elems.each(function(index) {
           parent_elem.removeClass('open show');
           card_obj.removeClass('open show');
         }, 1000);
+      } else {
+        parent_elem.addClass('match');
+        card_obj.addClass('match');
       }
       open_cards = 0;
     } else {
