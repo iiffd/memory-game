@@ -42,11 +42,13 @@
          current_card.parent().removeClass('open show');
          previous_card.parent().removeClass('open show');
          gamestate.open_cards = 0;
+         gamestate.check_score();
        }, 1000);
      } else {
        // Card match
        current_card.parent().addClass('match');
        previous_card.parent().addClass('match');
+       gamestate.open_cards = 0;
      }
    }
  }
@@ -56,7 +58,12 @@ class Gamestate {
   constructor() {
     this.open_cards = 0;
     this.previous_card = {};
-    this.wrong_guesses = 0;
+    this.move_counter = 0;
+  }
+
+  check_score() {
+    this.move_counter += 1;
+    $('.moves').text(this.move_counter)
   }
 }
 
