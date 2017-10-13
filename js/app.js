@@ -1,7 +1,7 @@
 /*
- * Create a list that holds all of your cards
+ * Models for cards and gamestate.
  */
- let card_elems = $('.card').children();
+
  class Card {
    constructor(card_elem) {
      this.card_elem = card_elem;
@@ -9,23 +9,60 @@
      this.match = false;
    }
 
-   check_card() {
-     this.card_elem.addClass('show');
+   check_card(gamestate) {
+     // Change class depending on gamestate.
+     const self = this;
+     const card_selector = $(this.card_elem).parent();
+      card_selector.click(function() {
+        if (gamestate.open_cards < 2 && self.open === false) {
+          self.open = true;
+          card_selector.addClass('open show');
+          gamestate.open_cards += 1;
+          // Check card match.
+          if (gamestate.open_cards == 2) {
+            self.check_match(gamestate);
+          }
+          gamestate.previous_card = self;
+
+        }
+     })
+   }
+
+   check_match(gamestate) {
+     // Checks to see if cards match
+     const self = this;
+     const current_card = $(this.card_elem);
+     const previous_card = $(gamestate.previous_card.card_elem);
+     gamestate.previous_card.open = false;
+     self.open = false;
+
+     if (current_card.attr('class') !== previous_card.attr('class')) {
+       // Cards don't match
+       setTimeout(function() {
+         current_card.parent().removeClass('open show');
+         previous_card.parent().removeClass('open show');
+         gamestate.open_cards = 0;
+       }, 1000);
+     } else {
+       // Card match
+       current_card.parent().addClass('match');
+       previous_card.parent().addClass('match');
+     }
    }
  }
 
- const shuffled_values = [];
- for (let i = 0; i < card_elems.length; i++) {
-   shuffled_values.push(card_elems[i].className);
- }
+// Keep track of number of open cards and previous card value.
+class Gamestate {
+  constructor() {
+    this.open_cards = 0;
+    this.previous_card = {};
+    this.wrong_guesses = 0;
+  }
+}
 
 /*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
+ * Functions for game.
  */
-
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -42,41 +79,47 @@ function shuffle(array) {
     return array;
 }
 
-let open_cards = 0;
-let card_obj = ''
-// Shuffles card values and places them in dom in mixed order
-shuffle(shuffled_values);
-card_elems.each(function(index) {
-  const card_elem = $(this);
-  card_elem.attr('class', shuffled_values[index]);
+// Reinitializes gamestate
+function reset() {
+  shuffle(shuffled_values);
+  card_elems.each(function(index) {
+    const card_elem = $(this);
+    card_elem.attr('class', shuffled_values[index]);
+    card_elem.removeClass('open show');
+    card_elem.removeClass('match');
+  });
+}
+$('.restart').click(function() {
+  reset();
+})
 
-  card_elem.parent().click(function() {
-    if (open_cards < 2) {
-      const parent_elem = $(this);
-      const child_elem = parent_elem.children();
-      parent_elem.addClass('open show');
 
-      open_cards++
-      if (open_cards == 2) {
-        let prev_child = card_obj.children()
-        if (child_elem.attr('class') !== prev_child.attr('class')) {
-          setTimeout(function() {
-            parent_elem.removeClass('open show');
-            card_obj.removeClass('open show');
-            open_cards = 0;
-          }, 1000);
-        } else {
-          parent_elem.addClass('match');
-          card_obj.addClass('match');
-          open_cards = 0;
-        }
-      } else {
-        card_obj = $(this);
-      }
-    }
+/*
+ * Initialize game
+ */
 
-  })
-});
+function startGame() {
+  let card_elems = $('.card').children();
+  let gamestate = new Gamestate();
+  const shuffled_values = [];
+  const card_list = [];
+
+  for (let i = 0; i < card_elems.length; i++) {
+    shuffled_values.push(card_elems[i].className);
+  }
+  // TODO: turn into function. Shuffles card values and places them in dom in mixed order.
+  shuffle(shuffled_values);
+  card_elems.each(function(index) {
+    const card_elem = $(this);
+    card_elem.attr('class', shuffled_values[index]);
+    // Initialize card list class.
+    card_list.push(new Card(card_elem));
+    card_list[index].check_card(gamestate);
+  });
+}
+
+startGame();
+
 
 /*
  * set up the event listener for a card. If a card is clicked:
