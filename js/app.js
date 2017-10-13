@@ -63,7 +63,28 @@ class Gamestate {
 
   check_score() {
     this.move_counter += 1;
+    const stars = $('.stars');
+    // Updates dom move counter
     $('.moves').text(this.move_counter)
+
+    // Updates stars on how many moves player makes
+    switch (this.move_counter) {
+      case 7:
+        stars.children()[0].remove();
+        break;
+      case 14:
+        stars.children()[0].remove();
+        break;
+      case 21:
+        stars.children()[0].remove();
+        break;
+      case 28:
+        stars.children()[0].remove();
+        break;
+      case 35:
+        stars.children()[0].remove();
+        break;
+    }
   }
 }
 
