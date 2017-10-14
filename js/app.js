@@ -43,7 +43,7 @@
          previous_card.parent().removeClass('open show');
          gamestate.open_cards = 0;
          gamestate.check_score();
-       }, 1000);
+       }, 300);
      } else {
        // Card match
        current_card.parent().addClass('match');
@@ -66,10 +66,9 @@ class Gamestate {
     const stars = $('.stars');
     // Updates dom move counter
     $('.moves').text(this.move_counter)
-
     // Updates stars on how many moves player makes
     switch (this.move_counter) {
-      case 7:
+      case 2:
         stars.children()[0].remove();
         break;
       case 14:
@@ -107,19 +106,49 @@ function shuffle(array) {
     return array;
 }
 
-// Reinitializes gamestate
-function reset() {
+// Randomizes cards on board
+function applyShuffle(gamestate) {
+  const card_elems = $('.card').children();
+  const shuffled_values = [];
+  const card_list = [];
+
+  for (let i = 0; i < card_elems.length; i++) {
+    shuffled_values.push(card_elems[i].className);
+  }
+
   shuffle(shuffled_values);
+  // Apply shuffle values to dom
   card_elems.each(function(index) {
     const card_elem = $(this);
     card_elem.attr('class', shuffled_values[index]);
-    card_elem.removeClass('open show');
-    card_elem.removeClass('match');
-  });
+  })
+  return card_elems;
 }
-$('.restart').click(function() {
-  reset();
-})
+
+// Reinitializes gamestate
+function reset(card_list, gamestate) {
+  card_list.forEach(function(card) {
+    $(card.card_elem).parent().removeClass('show open match');
+  })
+
+  // Resets moves to 0
+  $('.moves').text(0);
+  // Resets number of stars back to 5
+  let stars_to_add = parseInt(gamestate.move_counter / 2);
+  console.log(stars_to_add, gamestate.move_counter);
+  const star = $('<li><i class="fa fa-star"></i></li>');
+  for (let i = 0; i < stars_to_add; i++) {
+    $('.stars').append(star);
+  }
+
+  // Reset gamestate and randomize deck
+  gamestate.move_counter = 0;
+  gamestate.open_cards = 0;
+  gamestate.previous_card = {};
+  applyShuffle(gamestate);
+
+}
+
 
 
 /*
@@ -127,23 +156,20 @@ $('.restart').click(function() {
  */
 
 function startGame() {
-  let card_elems = $('.card').children();
-  let gamestate = new Gamestate();
-  const shuffled_values = [];
+  const gamestate = new Gamestate();
   const card_list = [];
 
-  for (let i = 0; i < card_elems.length; i++) {
-    shuffled_values.push(card_elems[i].className);
-  }
-  // TODO: turn into function. Shuffles card values and places them in dom in mixed order.
-  shuffle(shuffled_values);
+  // Applies shuffled deck to board
+  card_elems = applyShuffle(gamestate);
   card_elems.each(function(index) {
-    const card_elem = $(this);
-    card_elem.attr('class', shuffled_values[index]);
-    // Initialize card list class.
-    card_list.push(new Card(card_elem));
+    card_list.push(new Card(this));
     card_list[index].check_card(gamestate);
   });
+
+  // Reset game upon click
+  $('.restart').click(function() {
+    reset(card_list, gamestate);
+  })
 }
 
 startGame();
