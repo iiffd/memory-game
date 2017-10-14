@@ -119,8 +119,7 @@ function applyShuffle(gamestate) {
   shuffle(shuffled_values);
   // Apply shuffle values to dom
   card_elems.each(function(index) {
-    const card_elem = $(this);
-    card_elem.attr('class', shuffled_values[index]);
+    $(this).attr('class', shuffled_values[index]);
   })
   return card_elems;
 }
@@ -161,6 +160,8 @@ function startGame() {
 
   // Applies shuffled deck to board
   card_elems = applyShuffle(gamestate);
+
+  // Initialize card class list
   card_elems.each(function(index) {
     card_list.push(new Card(this));
     card_list[index].check_card(gamestate);
