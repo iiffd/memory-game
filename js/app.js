@@ -34,37 +34,15 @@
      const self = this;
      const current_card = $(this.card_elem);
      const previous_card = $(gamestate.previous_card.card_elem);
-     const cur_card_elem = current_card.parent();
-     const prev_card_elem = previous_card.parent();
      gamestate.previous_card.open = false;
      self.open = false;
 
      if (current_card.attr('class') !== previous_card.attr('class')) {
        // Cards don't match
-       cur_card_elem.addClass('wrong')
-       prev_card_elem .addClass('wrong')
-       // Shakes cards
-       cur_card_elem.effect('shake');
-       prev_card_elem.effect('shake');
-
-       // Shows cards for some time
-       setTimeout(function() {
-         cur_card_elem.removeClass('open show wrong');
-         prev_card_elem .removeClass('open show wrong');
-         gamestate.open_cards = 0;
-         gamestate.check_score();
-       }, 700);
+       wrongMatch(current_card.parent(), previous_card.parent(), gamestate);
      } else {
-       // Card match
-       gamestate.match_count += 1;
-       cur_card_elem.addClass('match');
-       prev_card_elem.addClass('match');
-       // Shakes card horizontal slower
-       cur_card_elem.effect('shake', {direction:'up', times:2,
-                            distance: 10}, 600)
-       prev_card_elem.effect('shake', {direction:'up', times:2,
-                             distance: 10}, 600)
-       gamestate.open_cards = 0;
+       // Cards match
+       match(current_card.parent(), previous_card.parent(), gamestate);
      }
    }
  }
@@ -114,6 +92,38 @@ class Gamestate {
 /*
  * Functions for game.
  */
+
+
+// Cards don't match
+function wrongMatch(cur_card, prev_card, gamestate) {
+  cur_card.addClass('wrong')
+  prev_card.addClass('wrong')
+  // Shakes cards
+  cur_card.effect('shake');
+  prev_card.effect('shake');
+
+  // Shows cards for some time
+  setTimeout(function() {
+    cur_card.removeClass('open show wrong');
+    prev_card.removeClass('open show wrong');
+    gamestate.open_cards = 0;
+    gamestate.check_score();
+  }, 700);
+}
+
+
+// Cards match
+function match(cur_card, prev_card, gamestate) {
+  gamestate.match_count += 1;
+  cur_card.addClass('match');
+  prev_card.addClass('match');
+  // Shakes card horizontal slower
+  cur_card.effect('shake', {direction:'up', times:2,
+                       distance: 10}, 600)
+  prev_card.effect('shake', {direction:'up', times:2,
+                        distance: 10}, 600)
+  gamestate.open_cards = 0;
+}
 
 
 // Shuffle function from http://stackoverflow.com/a/2450976
