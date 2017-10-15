@@ -139,12 +139,13 @@ function reset(card_list, gamestate) {
   // Resets moves to 0
   $('.moves').text(0);
   // Resets number of stars back to 5
-  let stars_to_add = parseInt(gamestate.move_counter / 2);
-  //for (let i = 0; i < stars_to_add; i++) {
-    //$('.stars').append('<li><i class="fa fa-star"></i></li>');
-  //}
-  gamestate.star.appendTo('.stars');
+  stars = $(".stars").children();
+  stars.each(function(index) {
+    $(stars[index]).removeClass('empty-star');
+  })
+
   // Reset gamestate and randomize deck
+  gamestate.star_count = 0;
   gamestate.move_counter = 0;
   gamestate.open_cards = 0;
   gamestate.previous_card = {};
