@@ -81,6 +81,9 @@ h1 {
     font-size: 33px;
 }
 
+.deck .card.wrong {
+    background: #f44242;
+}
 /*
  * Styles for the Score Panel
  */
@@ -109,6 +112,6 @@ h1 {
 }
 
 .empty-star {
-  color: white;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    color: white;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
