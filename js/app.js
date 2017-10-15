@@ -123,8 +123,17 @@ function match(cur_card, prev_card, gamestate) {
   prev_card.effect('shake', {direction:'up', times:2,
                         distance: 10}, 600)
   gamestate.open_cards = 0;
+
+  winMessage(gamestate);
 }
 
+
+// Win message popup
+function winMessage(gamestate) {
+  // Changes win message depending on star count
+  $('#end-message').text(`Great job! You won in ${gamestate.move_counter} moves and ${gamestate.star_count} stars!`);
+  $('#myModal').modal('toggle');
+}
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -203,11 +212,24 @@ function startGame() {
     card_list[index].check_card(gamestate);
   });
 
+  // Removes modal on x click
+  $('.close').click(function() {
+    $('#myModal').modal('toggle');
+  })
+
+  // Play again button. Closes modal and resets board
+  $('.btn-success').click(function() {
+    $('#myModal').modal('toggle');
+    reset(card_list, gamestate);
+  })
+
   // Reset game upon click
   $('.restart').click(function() {
     reset(card_list, gamestate);
   })
 }
+
+// Hide modal until player meets win condition
 
 startGame();
 
