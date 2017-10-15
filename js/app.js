@@ -59,6 +59,7 @@ class Gamestate {
     this.open_cards = 0;
     this.previous_card = {};
     this.move_counter = 0;
+    this.star_count = 5;
   }
 
   check_score() {
@@ -69,19 +70,24 @@ class Gamestate {
     // Updates stars on how many moves player makes
     switch (this.move_counter) {
       case 2:
-        stars.children()[0].remove();
+        $(stars.children()[stars.children().length - 1]).addClass('empty-star')
+        this.star_count -= 1;
         break;
-      case 14:
-        stars.children()[0].remove();
+      case 4:
+        $(stars.children()[stars.children().length - 2]).addClass('empty-star')
+        this.star_count -= 1;
         break;
       case 21:
-        stars.children()[0].remove();
+        $(stars.children()[stars.children().length - 3]).addClass('empty-star')
+        this.star_count -= 1;
         break;
       case 28:
-        stars.children()[0].remove();
+        $(stars.children()[stars.children().length - 4]).addClass('empty-star')
+        this.star_count -= 1;
         break;
       case 35:
-        stars.children()[0].remove();
+        $(stars.children()[stars.children().length - 5]).addClass('empty-star')
+        this.star_count -= 1;
         break;
     }
   }
@@ -134,12 +140,10 @@ function reset(card_list, gamestate) {
   $('.moves').text(0);
   // Resets number of stars back to 5
   let stars_to_add = parseInt(gamestate.move_counter / 2);
-  console.log(stars_to_add, gamestate.move_counter);
-  const star = $('<li><i class="fa fa-star"></i></li>');
-  for (let i = 0; i < stars_to_add; i++) {
-    $('.stars').append(star);
-  }
-
+  //for (let i = 0; i < stars_to_add; i++) {
+    //$('.stars').append('<li><i class="fa fa-star"></i></li>');
+  //}
+  gamestate.star.appendTo('.stars');
   // Reset gamestate and randomize deck
   gamestate.move_counter = 0;
   gamestate.open_cards = 0;
