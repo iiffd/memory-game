@@ -59,6 +59,11 @@
        gamestate.match_count += 1;
        cur_card_elem.addClass('match');
        prev_card_elem.addClass('match');
+       // Shakes card horizontal slower
+       cur_card_elem.effect('shake', {direction:'up', times:2,
+                            distance: 10}, 600)
+       prev_card_elem.effect('shake', {direction:'up', times:2,
+                             distance: 10}, 600)
        gamestate.open_cards = 0;
      }
    }
