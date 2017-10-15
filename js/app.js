@@ -2,6 +2,7 @@
  * Models for cards and gamestate.
  */
 
+
  class Card {
    constructor(card_elem) {
      this.card_elem = card_elem;
@@ -33,25 +34,36 @@
      const self = this;
      const current_card = $(this.card_elem);
      const previous_card = $(gamestate.previous_card.card_elem);
+     const cur_card_elem = current_card.parent();
+     const prev_card_elem = previous_card.parent();
      gamestate.previous_card.open = false;
      self.open = false;
 
      if (current_card.attr('class') !== previous_card.attr('class')) {
        // Cards don't match
+       cur_card_elem.addClass('wrong')
+       prev_card_elem .addClass('wrong')
+       // Shakes cards
+       cur_card_elem.effect('shake');
+       prev_card_elem.effect('shake');
+
+       // Shows cards for some time
        setTimeout(function() {
-         current_card.parent().removeClass('open show');
-         previous_card.parent().removeClass('open show');
+         cur_card_elem.removeClass('open show wrong');
+         prev_card_elem .removeClass('open show wrong');
          gamestate.open_cards = 0;
          gamestate.check_score();
-       }, 300);
+       }, 700);
      } else {
        // Card match
-       current_card.parent().addClass('match');
-       previous_card.parent().addClass('match');
+       gamestate.match_count += 1;
+       cur_card_elem.addClass('match');
+       prev_card_elem.addClass('match');
        gamestate.open_cards = 0;
      }
    }
  }
+
 
 // Keep track of number of open cards and previous card value.
 class Gamestate {
@@ -60,6 +72,7 @@ class Gamestate {
     this.previous_card = {};
     this.move_counter = 0;
     this.star_count = 5;
+    this.match_count = 0;
   }
 
   check_score() {
@@ -97,6 +110,7 @@ class Gamestate {
  * Functions for game.
  */
 
+
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -111,6 +125,7 @@ function shuffle(array) {
 
     return array;
 }
+
 
 // Randomizes cards on board
 function applyShuffle(gamestate) {
@@ -130,6 +145,7 @@ function applyShuffle(gamestate) {
   return card_elems;
 }
 
+
 // Reinitializes gamestate
 function reset(card_list, gamestate) {
   card_list.forEach(function(card) {
@@ -148,16 +164,16 @@ function reset(card_list, gamestate) {
   gamestate.star_count = 0;
   gamestate.move_counter = 0;
   gamestate.open_cards = 0;
+  gamestate.match_count = 0;
   gamestate.previous_card = {};
   applyShuffle(gamestate);
-
 }
-
 
 
 /*
  * Initialize game
  */
+
 
 function startGame() {
   const gamestate = new Gamestate();
