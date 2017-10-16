@@ -135,6 +135,7 @@ function winMessage(gamestate) {
   $('#myModal').modal('toggle');
 }
 
+
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -171,7 +172,7 @@ function applyShuffle(gamestate) {
 
 
 // Reinitializes gamestate
-function reset(card_list, gamestate) {
+function reset(card_list, gamestate, timer) {
   card_list.forEach(function(card) {
     $(card.card_elem).parent().removeClass('show open match');
   })
@@ -191,6 +192,18 @@ function reset(card_list, gamestate) {
   gamestate.match_count = 0;
   gamestate.previous_card = {};
   applyShuffle(gamestate);
+  clearInterval(timer);
+  timer = null;
+  // Start timer
+  let start = new Date;
+  timer = setInterval(function(){ startTimer(start) }, 1000);
+  return timer;
+}
+
+// Timer function from
+// https://stackoverflow.com/questions/2604450/how-to-create-a-jquery-clock-timer
+function startTimer(start){
+  $('.timer').text(Math.round((new Date - start) / 1000));
 }
 
 
@@ -223,16 +236,18 @@ function startGame() {
     reset(card_list, gamestate);
   })
 
+  // Start timer
+  let start = new Date;
+  let timer = setInterval(function(){ startTimer(start) }, 1000);
+
   // Reset game upon click
   $('.restart').click(function() {
-    reset(card_list, gamestate);
+    timer = reset(card_list, gamestate, timer);
   })
 }
 
-// Hide modal until player meets win condition
 
 startGame();
-
 
 /*
  * set up the event listener for a card. If a card is clicked:
