@@ -65,23 +65,23 @@ class Gamestate {
     $('.moves').text(this.move_counter)
     // Updates stars on how many moves player makes
     switch (this.move_counter) {
-      case 2:
+      case 5:
         $(stars.children()[stars.children().length - 1]).addClass('empty-star')
         this.star_count -= 1;
         break;
-      case 4:
+      case 10:
         $(stars.children()[stars.children().length - 2]).addClass('empty-star')
         this.star_count -= 1;
         break;
-      case 21:
+      case 15:
         $(stars.children()[stars.children().length - 3]).addClass('empty-star')
         this.star_count -= 1;
         break;
-      case 28:
+      case 20:
         $(stars.children()[stars.children().length - 4]).addClass('empty-star')
         this.star_count -= 1;
         break;
-      case 35:
+      case 25:
         $(stars.children()[stars.children().length - 5]).addClass('empty-star')
         this.star_count -= 1;
         break;
@@ -124,14 +124,18 @@ function match(cur_card, prev_card, gamestate) {
                         distance: 10}, 600)
   gamestate.open_cards = 0;
 
-  winMessage(gamestate);
+  // Popup shows if win condition met
+  if (gamestate.match_count === 8) {
+    winMessage(gamestate);
+  }
 }
 
 
 // Win message popup
 function winMessage(gamestate) {
   // Changes win message depending on star count
-  $('#end-message').text(`Great job! You won in ${gamestate.move_counter} moves and ${gamestate.star_count} stars!`);
+  const win_time = $('.timer').text();
+  $('#end-message').text(`Great job! You won in ${win_time} seconds with ${gamestate.move_counter} moves and ${gamestate.star_count} stars!`);
   $('#myModal').modal('toggle');
 }
 
@@ -186,15 +190,17 @@ function reset(card_list, gamestate, timer) {
   })
 
   // Reset gamestate and randomize deck
-  gamestate.star_count = 0;
+  gamestate.star_count = 5;
   gamestate.move_counter = 0;
   gamestate.open_cards = 0;
   gamestate.match_count = 0;
   gamestate.previous_card = {};
   applyShuffle(gamestate);
+
+  // Stops timer
   clearInterval(timer);
   timer = null;
-  // Start timer
+  // New timer instance
   let start = new Date;
   timer = setInterval(function(){ startTimer(start) }, 1000);
   return timer;
@@ -230,15 +236,15 @@ function startGame() {
     $('#myModal').modal('toggle');
   })
 
-  // Play again button. Closes modal and resets board
-  $('.btn-success').click(function() {
-    $('#myModal').modal('toggle');
-    reset(card_list, gamestate);
-  })
-
   // Start timer
   let start = new Date;
   let timer = setInterval(function(){ startTimer(start) }, 1000);
+
+  // Play again button. Closes modal and resets board
+  $('.btn-success').click(function() {
+    $('#myModal').modal('toggle');
+    timer = reset(card_list, gamestate, timer);
+  })
 
   // Reset game upon click
   $('.restart').click(function() {
