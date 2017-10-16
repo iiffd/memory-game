@@ -10,7 +10,7 @@
      this.match = false;
    }
 
-   check_card(gamestate) {
+   check_card(gamestate, timer) {
      // Change class depending on gamestate.
      const self = this;
      const card_selector = $(this.card_elem).parent();
@@ -21,7 +21,7 @@
           gamestate.open_cards += 1;
           // Check card match.
           if (gamestate.open_cards == 2) {
-            self.check_match(gamestate);
+            self.check_match(gamestate, timer);
           }
           gamestate.previous_card = self;
 
@@ -29,7 +29,7 @@
      })
    }
 
-   check_match(gamestate) {
+   check_match(gamestate, timer) {
      // Checks to see if cards match
      const self = this;
      const current_card = $(this.card_elem);
@@ -42,7 +42,7 @@
        wrongMatch(current_card.parent(), previous_card.parent(), gamestate);
      } else {
        // Cards match
-       match(current_card.parent(), previous_card.parent(), gamestate);
+       match(current_card.parent(), previous_card.parent(), gamestate, timer);
      }
    }
  }
@@ -54,7 +54,7 @@ class Gamestate {
     this.open_cards = 0;
     this.previous_card = {};
     this.move_counter = 0;
-    this.star_count = 5;
+    this.star_count = 3;
     this.match_count = 0;
   }
 
@@ -105,7 +105,7 @@ function wrongMatch(cur_card, prev_card, gamestate) {
 
 
 // Cards match
-function match(cur_card, prev_card, gamestate) {
+function match(cur_card, prev_card, gamestate, timer) {
   gamestate.match_count += 1;
   cur_card.addClass('match');
   prev_card.addClass('match');
@@ -118,13 +118,15 @@ function match(cur_card, prev_card, gamestate) {
 
   // Popup shows if win condition met
   if (gamestate.match_count === 8) {
+    // Stops timer when game ends
+    clearInterval(timer);
     winMessage(gamestate);
   }
 }
 
 
 // Win message popup
-function winMessage(gamestate) {
+function winMessage(gamestate, timer) {
   // Changes win message depending on star count
   const win_time = $('.timer').text();
   $('#end-message').text(`Great job! You won in ${win_time} seconds with ${gamestate.move_counter} moves and ${gamestate.star_count} stars!`);
@@ -217,20 +219,20 @@ function startGame() {
   // Applies shuffled deck to board
   card_elems = applyShuffle(gamestate);
 
+  // Start timer
+  let start = new Date;
+  let timer = setInterval(function(){ startTimer(start) }, 1000);
+
   // Initialize card class list
   card_elems.each(function(index) {
     card_list.push(new Card(this));
-    card_list[index].check_card(gamestate);
+    card_list[index].check_card(gamestate, timer);
   });
 
   // Removes modal on x click
   $('.close').click(function() {
     $('#myModal').modal('toggle');
   })
-
-  // Start timer
-  let start = new Date;
-  let timer = setInterval(function(){ startTimer(start) }, 1000);
 
   // Play again button. Closes modal and resets board
   $('.btn-success').click(function() {
