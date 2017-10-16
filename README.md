@@ -3,18 +3,18 @@
 ## Table of Contents
 
 * [Instructions](#instructions)
-* [Contributing](#contributing)
+* [Dependencies](#dependencies)
 
 ## Instructions
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+Clone repo and launch index.html.
 
-To get started, open `js/app.js` and start building out the app's functionality
+**Game Instructions**:
+1. Every five wrong moves will decrement a star.
+2. Reset will clear board and randomize cards again.
+3. When a match is incorrect, card elements respond by changing color and shaking.
+4. When a match is correct, card elements change color and nod.
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
+## Dependencies
 
-## Contributing
-
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
-
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+Uses **jQuery**, **jQueryUI** (for the card movement), and **Bootstrap** (For card symbol and modal).
