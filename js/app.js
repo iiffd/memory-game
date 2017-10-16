@@ -77,14 +77,6 @@ class Gamestate {
         $(stars.children()[stars.children().length - 3]).addClass('empty-star')
         this.star_count -= 1;
         break;
-      case 20:
-        $(stars.children()[stars.children().length - 4]).addClass('empty-star')
-        this.star_count -= 1;
-        break;
-      case 25:
-        $(stars.children()[stars.children().length - 5]).addClass('empty-star')
-        this.star_count -= 1;
-        break;
     }
   }
 }
