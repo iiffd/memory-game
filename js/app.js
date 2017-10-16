@@ -36,6 +36,9 @@
      const previous_card = $(gamestate.previous_card.card_elem);
      gamestate.previous_card.open = false;
      self.open = false;
+     gamestate.move_counter += 1;
+     // Updates dom move counter
+     $('.moves').text(gamestate.move_counter);
 
      if (current_card.attr('class') !== previous_card.attr('class')) {
        // Cards don't match
@@ -59,21 +62,18 @@ class Gamestate {
   }
 
   check_score() {
-    this.move_counter += 1;
     const stars = $('.stars');
-    // Updates dom move counter
-    $('.moves').text(this.move_counter)
     // Updates stars on how many moves player makes
     switch (this.move_counter) {
-      case 5:
+      case 10:
         $(stars.children()[stars.children().length - 1]).addClass('empty-star')
         this.star_count -= 1;
         break;
-      case 10:
+      case 20:
         $(stars.children()[stars.children().length - 2]).addClass('empty-star')
         this.star_count -= 1;
         break;
-      case 15:
+      case 30:
         $(stars.children()[stars.children().length - 3]).addClass('empty-star')
         this.star_count -= 1;
         break;
