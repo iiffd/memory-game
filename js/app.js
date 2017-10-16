@@ -2,57 +2,73 @@
  * Models for cards and gamestate.
  */
 
+/** Class representing card element and logic. */
+class Card {
+  /**
+  * Create card object.
+  * @param {object} card_elem - jQuery card element.
+  */
+  constructor(card_elem) {
+   this.card_elem = card_elem;
+   this.open = false;
+   this.match = false;
+  }
 
- class Card {
-   constructor(card_elem) {
-     this.card_elem = card_elem;
-     this.open = false;
-     this.match = false;
-   }
+  /**
+  * Opens card on click. If two cards open, calls check_match.
+  * @param {object} gamestate - stores values regarding gamestate.
+  * @param {object} timer - stores set interval instance.
+  */
+  check_card(gamestate, timer) {
+   // Change class depending on gamestate.
+  const self = this;
+  const card_selector = $(this.card_elem).parent();
+  card_selector.click(function() {
+    if (gamestate.open_cards < 2 && self.open === false) {
+      self.open = true;
+      card_selector.addClass('open show');
+      gamestate.open_cards += 1;
+      // Check card match.
+      if (gamestate.open_cards == 2) {
+        self.check_match(gamestate, timer);
+      }
+      gamestate.previous_card = self;
+      }
+    })
+  }
 
-   check_card(gamestate, timer) {
-     // Change class depending on gamestate.
-     const self = this;
-     const card_selector = $(this.card_elem).parent();
-      card_selector.click(function() {
-        if (gamestate.open_cards < 2 && self.open === false) {
-          self.open = true;
-          card_selector.addClass('open show');
-          gamestate.open_cards += 1;
-          // Check card match.
-          if (gamestate.open_cards == 2) {
-            self.check_match(gamestate, timer);
-          }
-          gamestate.previous_card = self;
+  /**
+  * Check to see if cards match or not.
+  * @param {object} gamestate - stores values regarding gamestate.
+  * @param {object} timer - stores set interval instance.
+  */
+  check_match(gamestate, timer) {
+    // Checks to see if cards match
+    const self = this;
+    const current_card = $(this.card_elem);
+    const previous_card = $(gamestate.previous_card.card_elem);
+    gamestate.previous_card.open = false;
+    self.open = false;
+    gamestate.move_counter += 1;
+    // Updates dom move counter
+    $('.moves').text(gamestate.move_counter);
 
-        }
-     })
-   }
+    if (current_card.attr('class') !== previous_card.attr('class')) {
+      // Cards don't match
+      wrongMatch(current_card.parent(), previous_card.parent(), gamestate);
+    } else {
+      // Cards match
+      match(current_card.parent(), previous_card.parent(), gamestate, timer);
+    }
+  }
+}
 
-   check_match(gamestate, timer) {
-     // Checks to see if cards match
-     const self = this;
-     const current_card = $(this.card_elem);
-     const previous_card = $(gamestate.previous_card.card_elem);
-     gamestate.previous_card.open = false;
-     self.open = false;
-     gamestate.move_counter += 1;
-     // Updates dom move counter
-     $('.moves').text(gamestate.move_counter);
-
-     if (current_card.attr('class') !== previous_card.attr('class')) {
-       // Cards don't match
-       wrongMatch(current_card.parent(), previous_card.parent(), gamestate);
-     } else {
-       // Cards match
-       match(current_card.parent(), previous_card.parent(), gamestate, timer);
-     }
-   }
- }
-
-
-// Keep track of number of open cards and previous card value.
+/**
+* Class representing gamestate. Keeps track of open cards
+* and previous card value.
+*/
 class Gamestate {
+  /** Create gamestate object. */
   constructor() {
     this.open_cards = 0;
     this.previous_card = {};
@@ -61,6 +77,7 @@ class Gamestate {
     this.match_count = 0;
   }
 
+  /** Check's status of player's score and updates star status. */
   check_score() {
     const stars = $('.stars');
     // Updates stars on how many moves player makes
@@ -85,8 +102,12 @@ class Gamestate {
  * Functions for game.
  */
 
-
-// Cards don't match
+/**
+* Animates and changes card color to red. Closes card after some time.
+* @param {object} cur_card - Stores current card jQuery element.
+* @param {object} prev_card - Stores previous card jQuery element.
+* @param {object} gamestate - stores gamestate object.
+*/
 function wrongMatch(cur_card, prev_card, gamestate) {
   cur_card.addClass('wrong')
   prev_card.addClass('wrong')
@@ -104,7 +125,13 @@ function wrongMatch(cur_card, prev_card, gamestate) {
 }
 
 
-// Cards match
+/**
+* Animates and changes card color to green
+* @param {object} cur_card - Stores current card jQuery element.
+* @param {object} prev_card - Stores previous card jQuery element.
+* @param {object} gamestate - stores gamestate object.
+* @param {object} timer - stores timer object.
+*/
 function match(cur_card, prev_card, gamestate, timer) {
   gamestate.match_count += 1;
   cur_card.addClass('match');
@@ -125,7 +152,11 @@ function match(cur_card, prev_card, gamestate, timer) {
 }
 
 
-// Win message popup
+/**
+* Creates modal popup with player performance detail
+* @param {object} gamestate - stores gamestate object.
+* @param {object} timer - stores timer object.
+*/
 function winMessage(gamestate, timer) {
   // Changes win message depending on star count
   const win_time = $('.timer').text();
@@ -134,7 +165,10 @@ function winMessage(gamestate, timer) {
 }
 
 
-// Shuffle function from http://stackoverflow.com/a/2450976
+/**
+* Shuffle function from http://stackoverflow.com/a/2450976.
+* @param {array} array - Takes an array of card css titles.
+*/
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -150,7 +184,10 @@ function shuffle(array) {
 }
 
 
-// Randomizes cards on board
+/**
+* Randomizes cards on board.
+* @param {object} gamestate - stores gamestate object.
+*/
 function applyShuffle(gamestate) {
   const card_elems = $('.card').children();
   const shuffled_values = [];
@@ -169,7 +206,12 @@ function applyShuffle(gamestate) {
 }
 
 
-// Reinitializes gamestate
+/**
+* Sets gamestate values to zero and closes/randomizes all card elements.
+* @param {array} card_list - stores list of card elements.
+* @param {object} gamestate - stores gamestate object.
+* @param {object} timer - stores timer object.
+*/
 function reset(card_list, gamestate, timer) {
   card_list.forEach(function(card) {
     $(card.card_elem).parent().removeClass('show open match');
@@ -200,8 +242,12 @@ function reset(card_list, gamestate, timer) {
   return timer;
 }
 
-// Timer function from
-// https://stackoverflow.com/questions/2604450/how-to-create-a-jquery-clock-timer
+
+/**
+* Timer function from
+* https://stackoverflow.com/questions/2604450/how-to-create-a-jquery-clock-timer.
+* @param {object} start - new Date element with current time.
+*/
 function startTimer(start){
   $('.timer').text(Math.round((new Date - start) / 1000));
 }
@@ -211,7 +257,7 @@ function startTimer(start){
  * Initialize game
  */
 
-
+/** Creates card class list, gamestate obj, and activates page buttons. */
 function startGame() {
   const gamestate = new Gamestate();
   const card_list = [];
